@@ -2,6 +2,8 @@
 
 CS663 research tutorial · Khagendra Khatri · October 2026
 
+**Live site:** https://khagendra01.github.io/visual-memory-tutorial/ (GitHub Pages, `main` branch, root). Repository: https://github.com/Khagendra01/visual-memory-tutorial
+
 ## Start here
 
 Open `index.html` in a modern browser after extracting the ZIP. The tutorial uses static HTML, CSS, JavaScript, SVG diagrams, and bundled MP3 narration. No build, account, API key, model download, or JavaScript framework is required. The simulation uses synthetic observations and does not access a camera or microphone.
@@ -30,15 +32,15 @@ Allow approximately 25–28 minutes for reading, the three demo experiments, and
 
 ## Publish to GitHub Pages
 
-1. Sign in to GitHub and create a new repository, for example `visual-memory-tutorial`. A public repository is the straightforward option for GitHub Free. Do not put private household footage or credentials in it.
-2. Upload **the extracted files and folders**, not the ZIP. Put `index.html`, the other HTML pages, `assets`, and `downloads` at the repository root. Keep names and capitalization unchanged.
-3. In repository **Settings → Pages**, choose **Deploy from a branch**. Select **main** and **/(root)**, then save. Keep the supplied `.nojekyll` file if your upload method includes hidden files.
-4. Wait for GitHub's deployment to finish and use the Pages URL shown in Settings. A typical project URL is `https://YOUR-USERNAME.github.io/visual-memory-tutorial/`.
-5. Open the published address in a signed-out/private window. Test every page, audio track, diagram, download, demo control, and quiz. Use this published address in your submission and recording.
+This tutorial is already published: repository `Khagendra01/visual-memory-tutorial`, branch `main`, Pages source `/(root)`, live at https://khagendra01.github.io/visual-memory-tutorial/. To republish after an edit:
+
+1. Commit the change on `main` and push (`git push origin main`).
+2. GitHub rebuilds automatically. Check **Settings → Pages** (Deploy from a branch, `main`, `/(root)`) if the URL ever stops responding. Keep `.nojekyll` in the repository root.
+3. Open the published address in a signed-out/private window. Test every page, audio track, diagram, download, demo control, and quiz. Use this published address in your submission and recording.
 
 Official instructions: https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site
 
-All internal links are relative, so the tutorial supports a repository subpath. Publishing is not included in this download-ready delivery.
+All internal links are relative, so the tutorial works both locally from the extracted folder and under the repository subpath.
 
 ## Record the presentation
 
@@ -59,8 +61,9 @@ Each page uses `<audio controls preload="none">`. Replace its matching MP3 in `a
 - Checked responsive layout at 360, 390, 768, and 1024 CSS pixels on every page: no horizontal page scrolling, and wide tables and code blocks scroll inside their own containers.
 - Decoded all nine MP3 files in Chrome (43–56 seconds each) and confirmed each page transcript matches its `.txt` transcript file; seven captioned diagram files present.
 - Ran the Python example (returns the documented 3.61 m result) and validated the PPTX package, slide geometry, notes, and editable chart data.
+- Published to GitHub Pages and crawled the live site: all nine pages plus all 28 link targets (diagrams, MP3s, `memory.py`, the PowerPoint) return HTTP 200 from `https://khagendra01.github.io/visual-memory-tutorial/`, and the deployed `assets/app.js` matches the local file byte for byte.
 
-**Verification boundary:** The checks above ran headless, so they do not replace looking at the pages. Human checks remain for visual and responsive appearance, keyboard focus order, audio playback, opening the PowerPoint in desktop Microsoft PowerPoint, and the live GitHub Pages URL. Do the checks below on your own devices before submitting.
+**Verification boundary:** The checks above ran headless, so they do not replace looking at the pages. Human checks remain for visual appearance, keyboard focus order, audible playback, opening the PowerPoint in desktop Microsoft PowerPoint, and a signed-out pass over the live URL. Do the checks below on your own devices before submitting.
 
 ## Final browser checks
 

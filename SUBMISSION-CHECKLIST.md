@@ -17,9 +17,11 @@
 
 ## Complete before submission
 
+- [x] Publish the tutorial to GitHub: https://github.com/Khagendra01/visual-memory-tutorial
+- [x] Enable GitHub Pages (`main`, `/(root)`) and confirm every page, asset, and download loads: https://khagendra01.github.io/visual-memory-tutorial/
+- [x] Run the automated browser checks recorded in README → Verification performed (links, responsive layout, demo, quiz, audio decode).
 - [ ] Review the tutorial and explain the code and geometry in your own words.
-- [ ] Publish the extracted website to your GitHub account using GitHub Pages.
-- [ ] Complete the README's browser, audio, and published-link checks.
+- [ ] Open the live site in a signed-out window and complete the README's final browser checks (focus order, audio playback, 200% zoom, phone).
 - [ ] Confirm an unassisted learner takes 15–30 minutes.
 - [ ] Rehearse the presentation, including switching between PowerPoint and the live website.
 - [ ] Record your screen with your own clear voice and readable text.
