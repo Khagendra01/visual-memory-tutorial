@@ -99,7 +99,36 @@ strong{color:#fff}
 .list-col li:last-child{border-bottom:none}
 .list-col li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
 
-/* ── references (slide 9) ── */
+/* ── approach cards (slide 7) ── */
+.approach-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:1.2rem}
+.approach{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1.2rem;display:flex;flex-direction:column;gap:.6rem}
+.approach-tag{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);background:rgba(0,110,120,.25);padding:.25rem .6rem;border-radius:4px;display:inline-block;width:fit-content}
+.approach h3{font-size:1rem;color:#fff;text-transform:none;letter-spacing:0;margin:0}
+.approach p{font-size:.8rem;line-height:1.55;color:var(--soft)}
+.approach svg{width:100%;height:auto;border-radius:8px}
+
+/* ── CNN layers ── */
+.cnn-flow{display:flex;align-items:center;gap:0;margin:1.5rem 0 .8rem;flex-wrap:nowrap;overflow-x:auto}
+.cnn-layer{border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;min-width:64px;flex-shrink:0}
+.cnn-layer .lname{font-size:.65rem;font-weight:700;color:#fff}
+.cnn-layer .ldim{font-size:.55rem;color:var(--soft);margin-top:2px}
+.cnn-conn{color:var(--muted);font-size:.9rem;padding:0 .2rem;flex-shrink:0}
+
+/* ── loss chart ── */
+.loss-wrap{display:flex;gap:2rem;align-items:flex-start;margin-top:1rem}
+.loss-chart{flex:1}
+.infer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;flex-shrink:0;width:280px}
+.infer-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;overflow:hidden}
+.infer-card svg{display:block;width:100%;height:auto}
+.infer-label{font-size:.6rem;color:var(--soft);padding:.3rem .4rem;text-align:center}
+
+/* ── hack banner ── */
+.hack-badge{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--teal),#0d8f9a);
+  color:#fff;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:800;
+  padding:.35rem .9rem;border-radius:20px;margin-bottom:.8rem}
+
+/* ── references (slide 13) ── */
 .ref-list{display:grid;grid-template-columns:1fr 1fr;gap:.45rem 2.5rem;margin-top:.8rem}
 .ref-item{font-size:.84rem;color:var(--pale);display:flex;gap:.5rem;line-height:1.5}
 .ref-num{color:var(--accent);font-weight:700;flex-shrink:0;min-width:1.6em}
@@ -138,7 +167,10 @@ strong{color:#fff}
 
 /* ── responsive ── */
 @media(max-width:700px){
-  .cols,.cols-3,.steps,.feature-grid,.ref-list{grid-template-columns:1fr}
+  .cols,.cols-3,.steps,.feature-grid,.ref-list,.approach-grid{grid-template-columns:1fr}
+  .loss-wrap{flex-direction:column}
+  .infer-grid{width:100%;grid-template-columns:1fr 1fr 1fr}
+  .cnn-flow{flex-wrap:wrap}
   .pipeline{flex-direction:column;align-items:stretch}
   .pipe-arrow{transform:rotate(90deg);text-align:center}
   .slide{padding:3vh 5vw}
@@ -268,8 +300,361 @@ strong{color:#fff}
 </section>
 
 <!-- ═══ SLIDE 6 ═══ -->
-<section class="slide" data-notes='Switch from PowerPoint to the published GitHub Pages website. Show the introduction and persistent chapter navigation briefly, then open Interactive lab. Reset the demo. Move the glasses to the sofa with observation enabled and ask for the last-seen location. Now turn observation off and move them to the shelf. Query again and point out that memory still says sofa. Explain that the orange dot is teaching ground truth unavailable to a real assistant. Advance forty minutes to trigger a stale response. Reset, disable map alignment, and show that directional guidance is withheld. Briefly open Detect and remember to show the Python example, then Practice and References. Return to PowerPoint. This demonstration uses synthetic data and does not run a computer vision model.'>
+<section class="slide" data-notes='Here is how our hack actually works end to end. A phone camera captures a frame. We preprocess it, then run an object detection model to find bounding boxes around objects of interest. For each detected object, we extract identity features and match them against our enrolled inventory. We compute the 3D position from depth and camera pose. Then we store a compact memory record with the object identity, timestamp, location, and a small evidence crop. When the user asks where their glasses are, we query the memory, check freshness, verify map alignment, and return the last-seen location with confidence.'>
   <div class="slide-num"><em>06</em></div>
+  <span class="hack-badge">Our Hack</span>
+  <p class="eyebrow">Implementation</p>
+  <h2>How it works</h2>
+  <svg viewBox="0 0 960 200" style="width:100%;max-height:200px;margin-top:1rem" xmlns="http://www.w3.org/2000/svg">
+    <!-- Room scene -->
+    <rect x="10" y="30" width="140" height="130" rx="8" fill="#0f2a3d" stroke="#1e4a5c" stroke-width="1.5"/>
+    <text x="80" y="52" text-anchor="middle" fill="#91d9d3" font-size="11" font-weight="700" font-family="system-ui">Room</text>
+    <!-- table -->
+    <rect x="30" y="120" width="50" height="6" rx="2" fill="#536977"/>
+    <rect x="35" y="126" width="5" height="20" fill="#3a5567"/>
+    <rect x="70" y="126" width="5" height="20" fill="#3a5567"/>
+    <!-- glasses on table -->
+    <circle cx="45" cy="115" r="5" fill="none" stroke="#91d9d3" stroke-width="1.5"/>
+    <circle cx="65" cy="115" r="5" fill="none" stroke="#91d9d3" stroke-width="1.5"/>
+    <line x1="50" y1="115" x2="60" y2="115" stroke="#91d9d3" stroke-width="1.5"/>
+    <!-- camera icon -->
+    <rect x="100" y="60" width="35" height="25" rx="4" fill="#1a3a50" stroke="#536977" stroke-width="1"/>
+    <circle cx="117" cy="72" r="7" fill="none" stroke="#91d9d3" stroke-width="1.5"/>
+    <circle cx="117" cy="72" r="3" fill="#91d9d3"/>
+    <!-- FOV lines -->
+    <line x1="100" y1="68" x2="50" y2="110" stroke="#91d9d3" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.6"/>
+    <line x1="100" y1="78" x2="70" y2="115" stroke="#91d9d3" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.6"/>
+
+    <text x="165" y="100" fill="#91d9d3" font-size="20" font-family="system-ui">→</text>
+
+    <!-- Preprocess -->
+    <rect x="190" y="50" width="100" height="90" rx="8" fill="#0f2a3d" stroke="#1e4a5c" stroke-width="1.5"/>
+    <text x="240" y="75" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="system-ui">Preprocess</text>
+    <text x="240" y="95" text-anchor="middle" fill="#b8ccd8" font-size="9" font-family="system-ui">resize 640×640</text>
+    <text x="240" y="110" text-anchor="middle" fill="#b8ccd8" font-size="9" font-family="system-ui">normalize</text>
+    <text x="240" y="125" text-anchor="middle" fill="#b8ccd8" font-size="9" font-family="system-ui">augment</text>
+
+    <text x="305" y="100" fill="#91d9d3" font-size="20" font-family="system-ui">→</text>
+
+    <!-- Detect -->
+    <rect x="330" y="40" width="130" height="110" rx="8" fill="#0a3040" stroke="#006e78" stroke-width="2"/>
+    <text x="395" y="65" text-anchor="middle" fill="#91d9d3" font-size="11" font-weight="700" font-family="system-ui">Detect</text>
+    <!-- bbox -->
+    <rect x="355" y="75" width="55" height="35" rx="2" fill="none" stroke="#e8a87c" stroke-width="2"/>
+    <text x="395" y="88" text-anchor="middle" fill="#e8a87c" font-size="7" font-family="system-ui">glasses</text>
+    <text x="395" y="100" text-anchor="middle" fill="#e8a87c" font-size="7" font-family="system-ui">0.94</text>
+    <!-- features -->
+    <rect x="420" y="80" width="25" height="25" rx="3" fill="#1a3a50"/>
+    <text x="432" y="96" text-anchor="middle" fill="#91d9d3" font-size="7" font-family="system-ui">feat</text>
+    <text x="395" y="130" text-anchor="middle" fill="#b8ccd8" font-size="8" font-family="system-ui">bbox + identity</text>
+
+    <text x="475" y="100" fill="#91d9d3" font-size="20" font-family="system-ui">→</text>
+
+    <!-- Geometry -->
+    <rect x="500" y="50" width="100" height="90" rx="8" fill="#0f2a3d" stroke="#1e4a5c" stroke-width="1.5"/>
+    <text x="550" y="75" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="system-ui">Geometry</text>
+    <text x="550" y="95" text-anchor="middle" fill="#b8ccd8" font-size="9" font-family="system-ui">depth → 3D</text>
+    <text x="550" y="110" text-anchor="middle" fill="#b8ccd8" font-size="9" font-family="system-ui">camera pose</text>
+    <text x="550" y="125" text-anchor="middle" fill="#b8ccd8" font-size="9" font-family="system-ui">world coords</text>
+
+    <text x="615" y="100" fill="#91d9d3" font-size="20" font-family="system-ui">→</text>
+
+    <!-- Memory -->
+    <rect x="640" y="35" width="130" height="120" rx="8" fill="#1a2e1a" stroke="#2d5a2d" stroke-width="2"/>
+    <text x="705" y="58" text-anchor="middle" fill="#7dce7d" font-size="11" font-weight="700" font-family="system-ui">Memory</text>
+    <!-- record fields -->
+    <rect x="658" y="68" width="94" height="16" rx="3" fill="rgba(125,206,125,0.15)"/>
+    <text x="705" y="79" text-anchor="middle" fill="#a8dfa8" font-size="8" font-family="system-ui">id: glasses_01</text>
+    <rect x="658" y="88" width="94" height="16" rx="3" fill="rgba(125,206,125,0.15)"/>
+    <text x="705" y="99" text-anchor="middle" fill="#a8dfa8" font-size="8" font-family="system-ui">loc: (2.1, 0.8, 1.5)</text>
+    <rect x="658" y="108" width="94" height="16" rx="3" fill="rgba(125,206,125,0.15)"/>
+    <text x="705" y="119" text-anchor="middle" fill="#a8dfa8" font-size="8" font-family="system-ui">time: 09:12:34</text>
+    <rect x="658" y="128" width="94" height="16" rx="3" fill="rgba(125,206,125,0.15)"/>
+    <text x="705" y="139" text-anchor="middle" fill="#a8dfa8" font-size="8" font-family="system-ui">conf: 0.91</text>
+
+    <text x="785" y="100" fill="#91d9d3" font-size="20" font-family="system-ui">→</text>
+
+    <!-- Query -->
+    <rect x="810" y="50" width="130" height="90" rx="8" fill="#0f2a3d" stroke="#1e4a5c" stroke-width="1.5"/>
+    <text x="875" y="75" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="system-ui">Query</text>
+    <text x="875" y="95" text-anchor="middle" fill="#b8ccd8" font-size="9" font-family="system-ui">"Where are</text>
+    <text x="875" y="108" text-anchor="middle" fill="#b8ccd8" font-size="9" font-family="system-ui">my glasses?"</text>
+    <text x="875" y="128" text-anchor="middle" fill="#e8a87c" font-size="9" font-weight="700" font-family="system-ui">→ side table</text>
+  </svg>
+  <div class="callout" style="margin-top:.8rem">
+    <p><strong>Camera → Detect → Match → Geometry → Memory → Query</strong> — all processing stays on-device.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 7 ═══ -->
+<section class="slide" data-notes='We explored three different approaches for object detection and identification. First, using a cloud LLM with an API: you send the image to GPT-4o or Gemini, and it returns a structured description of what it sees. This is the easiest to prototype but requires internet and costs per call. Second, using YOLO: a lightweight real-time detector that runs locally on the phone, detecting objects in under 50 milliseconds. Third, using a ResNet architecture: a deep residual network that we fine-tune for our specific object classes, extracting feature embeddings for identity matching. Each has different tradeoffs between accuracy, speed, and resource usage.'>
+  <div class="slide-num"><em>07</em></div>
+  <span class="hack-badge">Our Hack</span>
+  <p class="eyebrow">Approaches</p>
+  <h2>3 detection approaches</h2>
+  <div class="approach-grid">
+    <!-- LLM API -->
+    <div class="approach">
+      <span class="approach-tag">Cloud · API</span>
+      <h3>LLM + Vision API</h3>
+      <svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+        <!-- phone -->
+        <rect x="15" y="15" width="60" height="100" rx="8" fill="#0f2a3d" stroke="#1e4a5c" stroke-width="1.5"/>
+        <rect x="22" y="30" width="46" height="50" rx="4" fill="#1a3a50"/>
+        <!-- glasses in viewfinder -->
+        <circle cx="36" cy="55" r="6" fill="none" stroke="#91d9d3" stroke-width="1.2"/>
+        <circle cx="54" cy="55" r="6" fill="none" stroke="#91d9d3" stroke-width="1.2"/>
+        <line x1="42" y1="55" x2="48" y2="55" stroke="#91d9d3" stroke-width="1.2"/>
+        <text x="45" y="100" text-anchor="middle" fill="#b8ccd8" font-size="8" font-family="system-ui">capture</text>
+        <!-- upload arrow -->
+        <text x="88" y="55" text-anchor="middle" fill="#91d9d3" font-size="18" font-family="system-ui">↑</text>
+        <!-- cloud -->
+        <ellipse cx="140" cy="30" rx="40" ry="18" fill="#0a3040" stroke="#006e78" stroke-width="1.5"/>
+        <text x="140" y="34" text-anchor="middle" fill="#91d9d3" font-size="8" font-weight="700" font-family="system-ui">Cloud API</text>
+        <text x="140" y="48" text-anchor="middle" fill="#b8ccd8" font-size="6" font-family="system-ui">GPT-4o / Gemini</text>
+        <!-- response -->
+        <text x="88" y="75" text-anchor="middle" fill="#e8a87c" font-size="16" font-family="system-ui">↓</text>
+        <rect x="100" y="80" width="100" height="45" rx="6" fill="#1a2e1a" stroke="#2d5a2d" stroke-width="1"/>
+        <text x="150" y="96" text-anchor="middle" fill="#a8dfa8" font-size="7" font-family="system-ui">"Glasses detected"</text>
+        <text x="150" y="108" text-anchor="middle" fill="#a8dfa8" font-size="7" font-family="system-ui">"on wooden table"</text>
+        <text x="150" y="120" text-anchor="middle" fill="#a8dfa8" font-size="7" font-family="system-ui">"confidence: high"</text>
+      </svg>
+      <p>Send image to GPT-4o / Gemini. Easiest prototype. Needs internet, costs per call, ~1-3s latency.</p>
+    </div>
+    <!-- YOLO -->
+    <div class="approach">
+      <span class="approach-tag">Edge · Real-time</span>
+      <h3>YOLO Detector</h3>
+      <svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+        <!-- input image grid -->
+        <rect x="10" y="20" width="70" height="70" rx="6" fill="#0f2a3d" stroke="#1e4a5c" stroke-width="1.5"/>
+        <text x="45" y="42" text-anchor="middle" fill="#b8ccd8" font-size="7" font-family="system-ui">input 640×640</text>
+        <!-- grid cells -->
+        <g stroke="#1e4a5c" stroke-width="0.5">
+          <line x1="10" y1="38" x2="80" y2="38"/><line x1="10" y1="56" x2="80" y2="56"/><line x1="10" y1="74" x2="80" y2="74"/>
+          <line x1="33" y1="20" x2="33" y2="90"/><line x1="57" y1="20" x2="57" y2="90"/>
+        </g>
+        <!-- bbox on grid -->
+        <rect x="25" y="50" width="35" height="25" rx="2" fill="none" stroke="#e8a87c" stroke-width="2"/>
+        <text x="42" y="65" text-anchor="middle" fill="#e8a87c" font-size="6" font-family="system-ui">glasses 0.94</text>
+
+        <text x="90" y="55" text-anchor="middle" fill="#91d9d3" font-size="16" font-family="system-ui">→</text>
+
+        <!-- YOLO network -->
+        <rect x="105" y="10" width="50" height="90" rx="6" fill="#0a3040" stroke="#006e78" stroke-width="1.5"/>
+        <text x="130" y="30" text-anchor="middle" fill="#91d9d3" font-size="8" font-weight="700" font-family="system-ui">YOLO</text>
+        <!-- layers -->
+        <rect x="115" y="38" width="30" height="8" rx="2" fill="#91d9d3" opacity="0.7"/>
+        <rect x="118" y="50" width="24" height="8" rx="2" fill="#91d9d3" opacity="0.5"/>
+        <rect x="121" y="62" width="18" height="8" rx="2" fill="#91d9d3" opacity="0.35"/>
+        <rect x="124" y="74" width="12" height="8" rx="2" fill="#91d9d3" opacity="0.2"/>
+        <text x="130" y="95" text-anchor="middle" fill="#b8ccd8" font-size="6" font-family="system-ui">~45ms</text>
+
+        <text x="165" y="55" text-anchor="middle" fill="#91d9d3" font-size="16" font-family="system-ui">→</text>
+
+        <!-- output -->
+        <rect x="180" y="20" width="30" height="70" rx="6" fill="#1a2e1a" stroke="#2d5a2d" stroke-width="1"/>
+        <text x="195" y="45" text-anchor="middle" fill="#a8dfa8" font-size="7" font-family="system-ui">bbox</text>
+        <text x="195" y="60" text-anchor="middle" fill="#a8dfa8" font-size="7" font-family="system-ui">class</text>
+        <text x="195" y="75" text-anchor="middle" fill="#a8dfa8" font-size="7" font-family="system-ui">conf</text>
+      </svg>
+      <p>Lightweight single-pass detector. Runs fully on-device at ~45ms/frame. No internet needed.</p>
+    </div>
+    <!-- ResNet -->
+    <div class="approach">
+      <span class="approach-tag">Edge · Feature</span>
+      <h3>ResNet Features</h3>
+      <svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+        <!-- input -->
+        <rect x="10" y="30" width="45" height="60" rx="5" fill="#0f2a3d" stroke="#1e4a5c" stroke-width="1.5"/>
+        <text x="32" y="55" text-anchor="middle" fill="#b8ccd8" font-size="7" font-family="system-ui">input</text>
+        <text x="32" y="68" text-anchor="middle" fill="#b8ccd8" font-size="6" font-family="system-ui">224×224</text>
+
+        <text x="65" y="60" text-anchor="middle" fill="#91d9d3" font-size="14" font-family="system-ui">→</text>
+
+        <!-- residual blocks -->
+        <rect x="80" y="15" width="30" height="90" rx="5" fill="#0a3040" stroke="#006e78" stroke-width="1.5"/>
+        <text x="95" y="32" text-anchor="middle" fill="#91d9d3" font-size="7" font-weight="700" font-family="system-ui">Res</text>
+        <text x="95" y="42" text-anchor="middle" fill="#91d9d3" font-size="7" font-weight="700" font-family="system-ui">Net</text>
+        <!-- residual connections -->
+        <path d="M85 50 Q95 48 105 50" fill="none" stroke="#e8a87c" stroke-width="1" marker-end="none"/>
+        <path d="M85 65 Q95 63 105 65" fill="none" stroke="#e8a87c" stroke-width="1"/>
+        <path d="M85 80 Q95 78 105 80" fill="none" stroke="#e8a87c" stroke-width="1"/>
+        <text x="95" y="100" text-anchor="middle" fill="#b8ccd8" font-size="5.5" font-family="system-ui">skip connections</text>
+        <text x="95" y="95" text-anchor="middle" fill="#e8a87c" font-size="5.5" font-family="system-ui">↳ residual</text>
+
+        <text x="120" y="60" text-anchor="middle" fill="#91d9d3" font-size="14" font-family="system-ui">→</text>
+
+        <!-- GAP -->
+        <rect x="135" y="35" width="25" height="35" rx="4" fill="#0f2a3d" stroke="#1e4a5c" stroke-width="1"/>
+        <text x="147" y="50" text-anchor="middle" fill="#b8ccd8" font-size="6" font-family="system-ui">GAP</text>
+        <text x="147" y="62" text-anchor="middle" fill="#b8ccd8" font-size="5.5" font-family="system-ui">2048-d</text>
+
+        <text x="168" y="60" text-anchor="middle" fill="#91d9d3" font-size="14" font-family="system-ui">→</text>
+
+        <!-- embedding -->
+        <rect x="180" y="30" width="30" height="45" rx="5" fill="#1a2e1a" stroke="#2d5a2d" stroke-width="1.5"/>
+        <text x="195" y="48" text-anchor="middle" fill="#a8dfa8" font-size="7" font-family="system-ui">embed</text>
+        <text x="195" y="60" text-anchor="middle" fill="#a8dfa8" font-size="6" font-family="system-ui">512-d</text>
+        <!-- comparison arrow -->
+        <text x="195" y="88" text-anchor="middle" fill="#e8a87c" font-size="12" font-family="system-ui">↔</text>
+        <text x="195" y="102" text-anchor="middle" fill="#b8ccd8" font-size="5.5" font-family="system-ui">match?</text>
+      </svg>
+      <p>Deep residual network fine-tuned for our objects. Extracts 512-d embeddings for identity matching.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 8 ═══ -->
+<section class="slide" data-notes='For the custom approach, we designed a simple CNN with four convolutional layers. Each layer has batch normalization and ReLU activation, followed by max pooling that halves the spatial dimensions. The feature maps go from 32 to 64 to 128 to 256 channels while the spatial size shrinks from 64 by 64 down to 4 by 4. Then we flatten the result, pass through a fully connected layer with 128 units and dropout, and output a classification over our object categories. This is deliberately simple so it can run on a phone with INT8 quantization.'>
+  <div class="slide-num"><em>08</em></div>
+  <span class="hack-badge">Our Hack</span>
+  <p class="eyebrow">Architecture</p>
+  <h2>Simple CNN design</h2>
+  <div class="cnn-flow">
+    <div class="cnn-layer" style="background:#0f2a3d;border:1px solid #1e4a5c;width:70px;height:80px">
+      <div class="lname">Input</div><div class="ldim">64×64×3</div>
+    </div>
+    <span class="cnn-conn">→</span>
+    <div class="cnn-layer" style="background:#0a3040;border:1px solid #006e78;width:70px;height:80px">
+      <div class="lname">Conv2D</div><div class="ldim">32 filters</div><div class="ldim">BN+ReLU</div><div class="ldim">32×32×32</div>
+    </div>
+    <span class="cnn-conn">→</span>
+    <div class="cnn-layer" style="background:#0a3040;border:1px solid #006e78;width:70px;height:80px">
+      <div class="lname">Conv2D</div><div class="ldim">64 filters</div><div class="ldim">BN+ReLU</div><div class="ldim">16×16×64</div>
+    </div>
+    <span class="cnn-conn">→</span>
+    <div class="cnn-layer" style="background:#0a3040;border:1px solid #006e78;width:70px;height:80px">
+      <div class="lname">Conv2D</div><div class="ldim">128 filters</div><div class="ldim">BN+ReLU</div><div class="ldim">8×8×128</div>
+    </div>
+    <span class="cnn-conn">→</span>
+    <div class="cnn-layer" style="background:#0a3040;border:1px solid #006e78;width:70px;height:80px">
+      <div class="lname">Conv2D</div><div class="ldim">256 filters</div><div class="ldim">BN+ReLU</div><div class="ldim">4×4×256</div>
+    </div>
+    <span class="cnn-conn">→</span>
+    <div class="cnn-layer" style="background:#1a2e1a;border:1px solid #2d5a2d;width:70px;height:80px">
+      <div class="lname">Flatten</div><div class="ldim">4096-d</div>
+    </div>
+    <span class="cnn-conn">→</span>
+    <div class="cnn-layer" style="background:#1a2e1a;border:1px solid #2d5a2d;width:70px;height:80px">
+      <div class="lname">Dense</div><div class="ldim">128</div><div class="ldim">Dropout 0.3</div>
+    </div>
+    <span class="cnn-conn">→</span>
+    <div class="cnn-layer" style="background:#2a1e10;border:1px solid #e8a87c;width:70px;height:80px">
+      <div class="lname">Output</div><div class="ldim">N classes</div><div class="ldim">Softmax</div>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:1rem">
+    <p><strong>Deliberately simple:</strong> 4 conv layers → runs on-phone with INT8 quantization. BN stabilizes training; dropout prevents overfitting.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 9 ═══ -->
+<section class="slide" data-notes='Here are our training results. The loss chart shows training loss steadily decreasing while validation loss starts rising after about fifteen epochs, which is the classic signature of overfitting. We use early stopping at the best validation point. On the right, you can see sample inference results. The top row shows correctly detected objects with bounding boxes and confidence scores. The bottom row shows the failure cases where the model confuses similar objects, like sunglasses versus reading glasses. These failures are exactly what the uncertainty-aware response policy is designed to catch.'>
+  <div class="slide-num"><em>09</em></div>
+  <span class="hack-badge">Our Hack</span>
+  <p class="eyebrow">Training</p>
+  <h2>Training results &amp; inference</h2>
+  <div class="loss-wrap">
+    <div class="loss-chart">
+      <svg viewBox="0 0 420 200" style="width:100%;max-height:220px" xmlns="http://www.w3.org/2000/svg">
+        <!-- axes -->
+        <line x1="50" y1="10" x2="50" y2="170" stroke="#536977" stroke-width="1"/>
+        <line x1="50" y1="170" x2="400" y2="170" stroke="#536977" stroke-width="1"/>
+        <!-- grid -->
+        <g stroke="#1e3a4a" stroke-width="0.5">
+          <line x1="50" y1="40" x2="400" y2="40"/>
+          <line x1="50" y1="70" x2="400" y2="70"/>
+          <line x1="50" y1="100" x2="400" y2="100"/>
+          <line x1="50" y1="130" x2="400" y2="130"/>
+        </g>
+        <!-- y labels -->
+        <text x="45" y="173" text-anchor="end" fill="#536977" font-size="8" font-family="system-ui">0.0</text>
+        <text x="45" y="133" text-anchor="end" fill="#536977" font-size="8" font-family="system-ui">0.5</text>
+        <text x="45" y="103" text-anchor="end" fill="#536977" font-size="8" font-family="system-ui">1.0</text>
+        <text x="45" y="73" text-anchor="end" fill="#536977" font-size="8" font-family="system-ui">1.5</text>
+        <text x="45" y="43" text-anchor="end" fill="#536977" font-size="8" font-family="system-ui">2.0</text>
+        <!-- x labels -->
+        <text x="50" y="183" fill="#536977" font-size="8" font-family="system-ui">0</text>
+        <text x="138" y="183" fill="#536977" font-size="8" font-family="system-ui">5</text>
+        <text x="225" y="183" fill="#536977" font-size="8" font-family="system-ui">10</text>
+        <text x="313" y="183" fill="#536977" font-size="8" font-family="system-ui">15</text>
+        <text x="395" y="183" fill="#536977" font-size="8" font-family="system-ui">20</text>
+        <!-- axis labels -->
+        <text x="225" y="197" text-anchor="middle" fill="#536977" font-size="9" font-family="system-ui">Epoch</text>
+        <text x="15" y="95" text-anchor="middle" fill="#536977" font-size="9" font-family="system-ui" transform="rotate(-90,15,95)">Loss</text>
+
+        <!-- training loss (teal, decreasing) -->
+        <polyline fill="none" stroke="#91d9d3" stroke-width="2.5"
+          points="50,15 86,32 122,50 158,68 194,85 230,100 266,112 302,122 338,130 374,136 400,140"/>
+        <!-- validation loss (orange, U-shape) -->
+        <polyline fill="none" stroke="#e8a87c" stroke-width="2.5" stroke-dasharray="6,3"
+          points="50,20 86,35 122,52 158,70 194,82 230,88 266,86 302,78 338,66 374,52 400,38"/>
+        <!-- overfitting region -->
+        <rect x="266" y="10" width="134" height="160" fill="rgba(232,168,124,0.07)" stroke="rgba(232,168,124,0.3)" stroke-width="1" stroke-dasharray="4,3" rx="4"/>
+        <text x="333" y="28" text-anchor="middle" fill="#e8a87c" font-size="8" font-weight="700" font-family="system-ui">overfitting</text>
+        <!-- best epoch marker -->
+        <circle cx="230" cy="88" r="4" fill="#e8a87c"/>
+        <text x="230" y="80" text-anchor="middle" fill="#e8a87c" font-size="7" font-weight="700" font-family="system-ui">best</text>
+        <!-- legend -->
+        <line x1="60" y1="155" x2="85" y2="155" stroke="#91d9d3" stroke-width="2.5"/>
+        <text x="90" y="158" fill="#b8ccd8" font-size="8" font-family="system-ui">train loss</text>
+        <line x1="150" y1="155" x2="175" y2="155" stroke="#e8a87c" stroke-width="2.5" stroke-dasharray="6,3"/>
+        <text x="180" y="158" fill="#b8ccd8" font-size="8" font-family="system-ui">val loss</text>
+      </svg>
+    </div>
+    <div class="infer-grid">
+      <!-- sample 1: correct -->
+      <div class="infer-card">
+        <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="80" fill="#1a2a35"/>
+          <rect x="15" y="55" width="30" height="4" rx="1" fill="#3a5567"/>
+          <circle cx="22" cy="50" r="4" fill="none" stroke="#91d9d3" stroke-width="1.5"/>
+          <circle cx="38" cy="50" r="4" fill="none" stroke="#91d9d3" stroke-width="1.5"/>
+          <line x1="26" y1="50" x2="34" y2="50" stroke="#91d9d3" stroke-width="1.5"/>
+          <rect x="14" y="40" width="32" height="22" rx="2" fill="none" stroke="#4ade80" stroke-width="1.5"/>
+          <text x="30" y="37" text-anchor="middle" fill="#4ade80" font-size="6" font-weight="700" font-family="system-ui">glasses 0.96</text>
+        </svg>
+        <div class="infer-label">✓ correct</div>
+      </div>
+      <!-- sample 2: correct -->
+      <div class="infer-card">
+        <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="80" fill="#1a2a35"/>
+          <rect x="50" y="30" width="40" height="35" rx="3" fill="#2a3d4d"/>
+          <rect x="55" y="35" width="15" height="10" rx="1" fill="#3a5567"/>
+          <circle cx="62" cy="50" r="4" fill="none" stroke="#91d9d3" stroke-width="1.5"/>
+          <circle cx="78" cy="50" r="4" fill="none" stroke="#91d9d3" stroke-width="1.5"/>
+          <line x1="66" y1="50" x2="74" y2="50" stroke="#91d9d3" stroke-width="1.5"/>
+          <rect x="54" y="42" width="32" height="20" rx="2" fill="none" stroke="#4ade80" stroke-width="1.5"/>
+          <text x="70" y="39" text-anchor="middle" fill="#4ade80" font-size="6" font-weight="700" font-family="system-ui">glasses 0.91</text>
+        </svg>
+        <div class="infer-label">✓ correct</div>
+      </div>
+      <!-- sample 3: failure -->
+      <div class="infer-card">
+        <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="80" fill="#1a2a35"/>
+          <!-- sunglasses (different style) -->
+          <rect x="20" y="45" width="22" height="8" rx="3" fill="#111" stroke="#555" stroke-width="0.5"/>
+          <rect x="48" y="45" width="22" height="8" rx="3" fill="#111" stroke="#555" stroke-width="0.5"/>
+          <line x1="42" y1="49" x2="48" y2="49" stroke="#555" stroke-width="1.5"/>
+          <rect x="18" y="38" width="56" height="20" rx="2" fill="none" stroke="#f87171" stroke-width="1.5"/>
+          <text x="46" y="35" text-anchor="middle" fill="#f87171" font-size="6" font-weight="700" font-family="system-ui">glasses 0.67</text>
+          <text x="46" y="72" text-anchor="middle" fill="#f87171" font-size="5" font-family="system-ui">sunglasses ≠ glasses</text>
+        </svg>
+        <div class="infer-label">✗ confused</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout warn" style="margin-top:.8rem">
+    <p><strong>Overfitting after ~epoch 15.</strong> Early stopping at best val loss. Failure case: sunglasses misidentified as glasses — exactly what uncertainty policy catches.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 10 ═══ -->
+<section class="slide" data-notes='Switch from PowerPoint to the published GitHub Pages website. Show the introduction and persistent chapter navigation briefly, then open Interactive lab. Reset the demo. Move the glasses to the sofa with observation enabled and ask for the last-seen location. Now turn observation off and move them to the shelf. Query again and point out that memory still says sofa. Explain that the orange dot is teaching ground truth unavailable to a real assistant. Advance forty minutes to trigger a stale response. Reset, disable map alignment, and show that directional guidance is withheld. Briefly open Detect and remember to show the Python example, then Practice and References. Return to PowerPoint. This demonstration uses synthetic data and does not run a computer vision model.'>
+  <div class="slide-num"><em>10</em></div>
   <p class="eyebrow">Live demo</p>
   <h2>Live website demonstration</h2>
   <div class="steps">
@@ -292,9 +677,9 @@ strong{color:#fff}
   <p class="small" style="margin-top:1.5rem">Website chapter 5: <a href="../demo.html" style="color:var(--accent)">Interactive lab</a> · synthetic observations</p>
 </section>
 
-<!-- ═══ SLIDE 7 ═══ -->
+<!-- ═══ SLIDE 11 ═══ -->
 <section class="slide" data-notes='An enrolled object inventory allows a relatively simple retrieval interface. A local object picker or a small phrase parser can map a request to an object ID, without a large language model. Quantization can reduce model weight storage, but conversion needs accuracy checks and representative calibration data. Measure actual latency and thermal behavior on the target phone. The record should retain only selected evidence and include a deletion control. Local storage can still reveal private information about a home. Accessibility means readable text, large controls, replayable audio, and alternatives to augmented reality. The proposed system needs testing with intended users.'>
-  <div class="slide-num"><em>07</em></div>
+  <div class="slide-num"><em>11</em></div>
   <p class="eyebrow">Design</p>
   <h2>Offline mobile design</h2>
   <div class="feature-grid">
@@ -312,9 +697,9 @@ strong{color:#fff}
   </div>
 </section>
 
-<!-- ═══ SLIDE 8 ═══ -->
+<!-- ═══ SLIDE 12 ═══ -->
 <section class="slide" data-notes='The camera can miss a move, confuse similar objects, or lose its map. Our response policy should expose these limits rather than turn every query into a confident answer. A pilot can use scripted observed and hidden moves in two rooms, with separate enrollment, tuning, and evaluation captures. Report correct last-seen retrieval, false confident answers, abstentions, relocalization success, and geometric errors. Include failures in the denominator. Future progress should improve identity stability, persistent mapping, and user control. The main conclusion is that visual memory can organize evidence, while uncertainty and time remain part of every answer.'>
-  <div class="slide-num"><em>08</em></div>
+  <div class="slide-num"><em>12</em></div>
   <p class="eyebrow">Honesty</p>
   <h2>Limits and evaluation</h2>
   <div class="cols">
@@ -342,9 +727,9 @@ strong{color:#fff}
   </div>
 </section>
 
-<!-- ═══ SLIDE 9 ═══ -->
+<!-- ═══ SLIDE 13 ═══ -->
 <section class="slide" data-notes="The websites annotated bibliography includes eight distinct works, with title, author, date, synopsis, and reliability assessment. It links primary research, platform documentation, and accessibility guidance. The numerical E SOM result is explicitly versioned to the July twenty twenty five manuscript. The figures and the simulation are original teaching materials. For further reading, compare how the papers define a query, what data each system may access, and how success is measured. Thank you.">
-  <div class="slide-num"><em>09</em></div>
+  <div class="slide-num"><em>13</em></div>
   <p class="eyebrow">Bibliography</p>
   <h2>References and further reading</h2>
   <div class="ref-list">
@@ -366,7 +751,7 @@ strong{color:#fff}
 <nav class="nav" id="nav">
   <button id="btnPrev" title="Previous slide (←)">← Prev</button>
   <div class="nav-center">
-    <span class="counter"><b id="cur">1</b> / <span id="total">9</span></span>
+    <span class="counter"><b id="cur">1</b> / <span id="total">13</span></span>
     <button id="btnNotes" title="Toggle speaker notes (N)">Notes</button>
     <button id="btnFs" class="primary" title="Fullscreen (F)">Fullscreen</button>
   </div>
