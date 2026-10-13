@@ -185,8 +185,39 @@ strong{color:#fff}
 <div class="deck" id="deck">
 
 <!-- ═══ SLIDE 1 ═══ -->
-<section class="slide active" data-notes='Here is how our hack actually works end to end. A phone camera captures a frame. We preprocess it, then run an object detection model to find bounding boxes around objects of interest. For each detected object, we extract identity features and match them against our enrolled inventory. We compute the 3D position from depth and camera pose. Then we store a compact memory record with the object identity, timestamp, location, and a small evidence crop. When the user asks where their glasses are, we query the memory, check freshness, verify map alignment, and return the last-seen location with confidence.'>
+<section class="slide title-slide active" data-notes="My topic is mobile computer vision for helping older adults remember where everyday objects were last observed. The central example is a pair of glasses. I will review the research, explain the components of a proposed offline mobile design, and demonstrate the difference between physical reality and stored visual memory. The system described here is a proposal and a teaching simulation, not a validated assistive product.">
   <div class="slide-num"><em>01</em></div>
+  <p class="eyebrow">CS663 · Project presentation</p>
+  <h1>A visual memory<br>for everyday objects</h1>
+  <p class="title-sub">Mobile computer vision and seniors</p>
+  <p class="title-meta">Khagendra Khatri<br>October 2026</p>
+</section>
+<!-- ═══ SLIDE 2 ═══ -->
+<section class="slide" data-notes='Camera observations first pass through object detection and identity matching. A tracker provides continuity across nearby frames, but a tracker ID is not automatically the identity of someones personal object. Depth and camera pose provide geometry. The application stores a compact, dated observation with its map identifier and evidence. A later query checks identity, freshness, and alignment before calculating displacement. This arrangement draws on the idea of streaming object memory, while the particular threshold policy and application architecture are our teaching design. The website includes original Python code for update and retrieval.'>
+  <div class="slide-num"><em>02</em></div>
+  <p class="eyebrow">Architecture</p>
+  <h2>Proposed mobile pipeline</h2>
+  <div class="pipeline">
+    <div class="pipe-node"><div class="label">Camera</div><div class="sub">image + depth</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node"><div class="label">Detect</div><div class="sub">object + class</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node"><div class="label">Match</div><div class="sub">identity</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node"><div class="label">Track</div><div class="sub">continuity</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node record"><div class="label">Memory</div><div class="sub">record</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node"><div class="label">Query</div><div class="sub">retrieval</div></div>
+  </div>
+  <div class="callout">
+    <p><strong>Memory record:</strong> identity · evidence · time · position · quality · map version</p>
+  </div>
+  <p class="small" style="margin-top:1rem">Tracker ID ≠ personal object identity. Threshold policy and app architecture are our teaching design. <span class="small">[3]</span></p>
+</section>
+<!-- ═══ SLIDE 3 ═══ -->
+<section class="slide" data-notes='Here is how our hack actually works end to end. A phone camera captures a frame. We preprocess it, then run an object detection model to find bounding boxes around objects of interest. For each detected object, we extract identity features and match them against our enrolled inventory. We compute the 3D position from depth and camera pose. Then we store a compact memory record with the object identity, timestamp, location, and a small evidence crop. When the user asks where their glasses are, we query the memory, check freshness, verify map alignment, and return the last-seen location with confidence.'>
+  <div class="slide-num"><em>03</em></div>
   <span class="hack-badge">Our Hack</span>
   <p class="eyebrow">Implementation</p>
   <h2>How it works</h2>
@@ -269,37 +300,6 @@ strong{color:#fff}
   <div class="callout" style="margin-top:.8rem">
     <p><strong>Camera → Detect → Match → Geometry → Memory → Query</strong> — all processing stays on-device.</p>
   </div>
-</section>
-<!-- ═══ SLIDE 2 ═══ -->
-<section class="slide title-slide" data-notes="My topic is mobile computer vision for helping older adults remember where everyday objects were last observed. The central example is a pair of glasses. I will review the research, explain the components of a proposed offline mobile design, and demonstrate the difference between physical reality and stored visual memory. The system described here is a proposal and a teaching simulation, not a validated assistive product.">
-  <div class="slide-num"><em>02</em></div>
-  <p class="eyebrow">CS663 · Project presentation</p>
-  <h1>A visual memory<br>for everyday objects</h1>
-  <p class="title-sub">Mobile computer vision and seniors</p>
-  <p class="title-meta">Khagendra Khatri<br>October 2026</p>
-</section>
-<!-- ═══ SLIDE 3 ═══ -->
-<section class="slide" data-notes='Camera observations first pass through object detection and identity matching. A tracker provides continuity across nearby frames, but a tracker ID is not automatically the identity of someones personal object. Depth and camera pose provide geometry. The application stores a compact, dated observation with its map identifier and evidence. A later query checks identity, freshness, and alignment before calculating displacement. This arrangement draws on the idea of streaming object memory, while the particular threshold policy and application architecture are our teaching design. The website includes original Python code for update and retrieval.'>
-  <div class="slide-num"><em>03</em></div>
-  <p class="eyebrow">Architecture</p>
-  <h2>Proposed mobile pipeline</h2>
-  <div class="pipeline">
-    <div class="pipe-node"><div class="label">Camera</div><div class="sub">image + depth</div></div>
-    <span class="pipe-arrow">→</span>
-    <div class="pipe-node"><div class="label">Detect</div><div class="sub">object + class</div></div>
-    <span class="pipe-arrow">→</span>
-    <div class="pipe-node"><div class="label">Match</div><div class="sub">identity</div></div>
-    <span class="pipe-arrow">→</span>
-    <div class="pipe-node"><div class="label">Track</div><div class="sub">continuity</div></div>
-    <span class="pipe-arrow">→</span>
-    <div class="pipe-node record"><div class="label">Memory</div><div class="sub">record</div></div>
-    <span class="pipe-arrow">→</span>
-    <div class="pipe-node"><div class="label">Query</div><div class="sub">retrieval</div></div>
-  </div>
-  <div class="callout">
-    <p><strong>Memory record:</strong> identity · evidence · time · position · quality · map version</p>
-  </div>
-  <p class="small" style="margin-top:1rem">Tracker ID ≠ personal object identity. Threshold policy and app architecture are our teaching design. <span class="small">[3]</span></p>
 </section>
 <!-- ═══ SLIDE 4 ═══ -->
 <section class="slide" data-notes='We explored three different approaches for object detection and identification. First, using a cloud LLM with an API: you send the image to GPT-4o or Gemini, and it returns a structured description of what it sees. This is the easiest to prototype but requires internet and costs per call. Second, using YOLO: a lightweight real-time detector that runs locally on the phone, detecting objects in under 50 milliseconds. Third, using a ResNet architecture: a deep residual network that we fine-tune for our specific object classes, extracting feature embeddings for identity matching. Each has different tradeoffs between accuracy, speed, and resource usage.'>
