@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A visual memory for everyday objects · Presentation</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#102638;--ink:#173247;--teal:#006e78;--teal-lt:#0a8a96;
+  --muted:#536977;--paper:#fff;--bg:#0c1d2e;
+  --accent:#91d9d3;--soft:#b8ccd8;--pale:#dce9f0;--orange:#b5431b;--warm:#e8a87c;
+  --font:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:var(--font);color:var(--paper)}
+
+/* ── deck ── */
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:4vh 6vw;opacity:0;pointer-events:none;transition:opacity .45s ease,transform .45s ease;transform:translateX(40px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0);z-index:2}
+.slide.prev{transform:translateX(-40px)}
+
+/* ── slide number ── */
+.slide-num{position:absolute;top:3.5vh;right:5vw;font-size:.75rem;letter-spacing:.12em;color:var(--soft);opacity:.7;font-weight:600}
+.slide-num em{font-style:normal;color:var(--accent);font-size:1.4em;vertical-align:-2px}
+
+/* ── typography ── */
+.eyebrow{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:1rem}
+h1{font-size:clamp(2.4rem,5.5vw,4.2rem);line-height:1.08;letter-spacing:-.02em;font-weight:800;color:#fff}
+h2{font-size:clamp(1.8rem,3.5vw,2.6rem);line-height:1.15;letter-spacing:-.01em;font-weight:750;color:#fff;margin-bottom:1.2rem}
+h3{font-size:1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:.5rem}
+p,li{color:var(--pale);font-size:clamp(.95rem,1.3vw,1.12rem);line-height:1.7}
+strong{color:#fff}
+.small{font-size:.82rem;color:var(--soft)}
+
+/* ── title slide ── */
+.title-slide{align-items:flex-start;justify-content:center}
+.title-slide h1{margin-bottom:.6rem}
+.title-sub{font-size:clamp(1.1rem,2vw,1.45rem);color:var(--accent);font-weight:500;margin-bottom:1.8rem}
+.title-meta{font-size:.9rem;color:var(--soft);line-height:1.9}
+.title-meta a{color:var(--accent)}
+
+/* ── two-col layout ── */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:1.5rem;align-items:start}
+.cols-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;margin-top:1.5rem}
+.col-block h3{margin-bottom:.6rem}
+.col-block p,.col-block li{font-size:.92rem;line-height:1.65}
+.col-block ul{padding-left:1.1rem}
+.col-block li{margin-bottom:.35rem}
+.col-block li::marker{color:var(--accent)}
+
+/* ── callout box ── */
+.callout{background:rgba(0,110,120,.18);border-left:3px solid var(--accent);padding:1rem 1.3rem;border-radius:0 8px 8px 0;margin-top:1.4rem}
+.callout p{font-size:.92rem;color:var(--pale)}
+.callout strong{color:var(--accent)}
+.warn{border-left-color:var(--orange);background:rgba(181,67,27,.12)}
+.warn strong{color:var(--warm)}
+
+/* ── pipeline diagram (slide 3) ── */
+.pipeline{display:flex;align-items:center;gap:0;margin:1.5rem 0;flex-wrap:wrap}
+.pipe-node{background:rgba(0,110,120,.22);border:1px solid rgba(145,217,211,.3);border-radius:10px;
+  padding:.7rem 1rem;text-align:center;min-width:110px}
+.pipe-node .label{font-size:.78rem;font-weight:700;color:#fff}
+.pipe-node .sub{font-size:.68rem;color:var(--soft);margin-top:2px}
+.pipe-arrow{color:var(--accent);font-size:1.3rem;padding:0 .4rem;flex-shrink:0}
+.pipe-node.record{background:rgba(181,67,27,.18);border-color:rgba(232,168,124,.4)}
+.pipe-node.record .label{color:var(--warm)}
+
+/* ── chart (slide 5) ── */
+.chart-wrap{display:flex;align-items:flex-end;gap:2.5rem;height:260px;margin:1.5rem 0 .8rem}
+.bar-group{display:flex;flex-direction:column;align-items:center;gap:.6rem;flex:1}
+.bar-val{font-size:1.6rem;font-weight:800;color:#fff}
+.bar-val.pct{color:var(--warm)}
+.bar{width:90px;border-radius:8px 8px 0 0;transition:height .8s ease}
+.bar.learned{background:var(--muted);height:12px}
+.bar.oracle{background:linear-gradient(180deg,var(--accent),var(--teal));height:210px}
+.bar-label{font-size:.82rem;color:var(--soft);text-align:center;line-height:1.35}
+.chart-note{font-size:.78rem;color:var(--muted);margin-top:.6rem}
+
+/* ── steps (slide 6) ── */
+.steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;margin-top:1.8rem}
+.step{background:rgba(0,110,120,.14);border:1px solid rgba(145,217,211,.2);border-radius:12px;padding:1.4rem}
+.step-num{font-size:2rem;font-weight:800;color:var(--accent);line-height:1;margin-bottom:.6rem}
+.step h3{font-size:.9rem;margin-bottom:.5rem;color:#fff;text-transform:none;letter-spacing:0}
+.step p{font-size:.88rem}
+
+/* ── feature grid (slide 7) ── */
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem 2rem;margin-top:1.2rem}
+.feat{display:flex;align-items:flex-start;gap:.6rem}
+.feat-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:7px;flex-shrink:0}
+.feat span{font-size:.92rem;color:var(--pale);line-height:1.55}
+
+/* ── two-col lists (slide 8) ── */
+.list-col{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1.4rem 1.6rem}
+.list-col h3{margin-bottom:.7rem}
+.list-col ul{list-style:none;padding:0}
+.list-col li{font-size:.9rem;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:.55rem}
+.list-col li:last-child{border-bottom:none}
+.list-col li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+
+/* ── references (slide 9) ── */
+.ref-list{display:grid;grid-template-columns:1fr 1fr;gap:.45rem 2.5rem;margin-top:.8rem}
+.ref-item{font-size:.84rem;color:var(--pale);display:flex;gap:.5rem;line-height:1.5}
+.ref-num{color:var(--accent);font-weight:700;flex-shrink:0;min-width:1.6em}
+
+/* ── nav bar ── */
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
+  padding:1rem 2rem;background:rgba(12,29,46,.85);backdrop-filter:blur(12px);z-index:100;
+  border-top:1px solid rgba(255,255,255,.07)}
+.nav-center{display:flex;align-items:center;gap:1rem}
+.nav button{background:none;border:1px solid rgba(255,255,255,.15);color:var(--pale);
+  font-size:.82rem;padding:.45rem 1rem;border-radius:6px;cursor:pointer;transition:.2s}
+.nav button:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav button.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+.nav button.primary:hover{background:var(--teal-lt)}
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:101;transition:width .3s ease}
+.counter{font-size:.82rem;color:var(--soft);letter-spacing:.06em}
+.counter b{color:#fff}
+
+/* ── notes panel ── */
+.notes{position:fixed;bottom:70px;left:0;right:0;background:rgba(16,38,56,.95);backdrop-filter:blur(16px);
+  padding:1.4rem 2rem;max-height:35vh;overflow-y:auto;z-index:99;border-top:1px solid rgba(145,217,211,.2);
+  display:none}
+.notes.open{display:block}
+.notes-label{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:.5rem}
+.notes p{font-size:.88rem;color:var(--pale);line-height:1.7}
+
+/* ── hint overlay ── */
+.hint{position:fixed;bottom:80px;right:2rem;font-size:.72rem;color:var(--muted);z-index:100;
+  background:rgba(12,29,46,.7);padding:.4rem .8rem;border-radius:6px;pointer-events:none;
+  transition:opacity .6s}
+.hint.hide{opacity:0}
+
+/* ── fullscreen ── */
+:fullscreen .nav,:fullscreen .hint{opacity:0;pointer-events:none}
+:fullscreen .nav:hover,:fullscreen .hint:focus{opacity:1;pointer-events:auto}
+
+/* ── responsive ── */
+@media(max-width:700px){
+  .cols,.cols-3,.steps,.feature-grid,.ref-list{grid-template-columns:1fr}
+  .pipeline{flex-direction:column;align-items:stretch}
+  .pipe-arrow{transform:rotate(90deg);text-align:center}
+  .slide{padding:3vh 5vw}
+  .chart-wrap{height:180px}
+  .bar.oracle{height:140px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- ═══ SLIDE 1 ═══ -->
+<section class="slide title-slide active" data-notes="My topic is mobile computer vision for helping older adults remember where everyday objects were last observed. The central example is a pair of glasses. I will review the research, explain the components of a proposed offline mobile design, and demonstrate the difference between physical reality and stored visual memory. The system described here is a proposal and a teaching simulation, not a validated assistive product.">
+  <div class="slide-num"><em>01</em></div>
+  <p class="eyebrow">CS663 · Project presentation</p>
+  <h1>A visual memory<br>for everyday objects</h1>
+  <p class="title-sub">Mobile computer vision and seniors</p>
+  <p class="title-meta">Khagendra Khatri<br>October 2026</p>
+</section>
+
+<!-- ═══ SLIDE 2 ═══ -->
+<section class="slide" data-notes='Consider glasses observed on a side table at nine twelve. If someone moves them while the camera looks elsewhere, the record remains a valid description of that earlier sighting. It does not establish the current location. Recognition, identity matching, and episodic memory answer different questions. Ego4D visual-query task uses an example image and returns a previous response track. Our proposed interface should show the evidence image, place, and timestamp.'>
+  <div class="slide-num"><em>02</em></div>
+  <p class="eyebrow">Concept</p>
+  <h2>The meaning of "last seen"</h2>
+  <p>A dated observation supports the answer. Hidden movement remains unknown.</p>
+  <div class="cols">
+    <div class="col-block">
+      <h3>What "last seen" means</h3>
+      <ul>
+        <li>Glasses observed on side table at 9:12</li>
+        <li>Someone moves them while camera looks away</li>
+        <li>Record still describes <strong>that earlier sighting</strong></li>
+        <li>Does <strong>not</strong> establish current location</li>
+      </ul>
+    </div>
+    <div class="col-block">
+      <h3>Different questions</h3>
+      <ul>
+        <li><strong>Recognition</strong> — is this the same object?</li>
+        <li><strong>Identity matching</strong> — is this <em>my</em> glasses?</li>
+        <li><strong>Episodic memory</strong> — where was it last seen?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <p><strong>Ego4D visual-query task</strong> — use an example image to return a previous response track. The interface should show evidence image, place, and timestamp. <span class="small">[1]</span></p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 3 ═══ -->
+<section class="slide" data-notes='Camera observations first pass through object detection and identity matching. A tracker provides continuity across nearby frames, but a tracker ID is not automatically the identity of someones personal object. Depth and camera pose provide geometry. The application stores a compact, dated observation with its map identifier and evidence. A later query checks identity, freshness, and alignment before calculating displacement. This arrangement draws on the idea of streaming object memory, while the particular threshold policy and application architecture are our teaching design. The website includes original Python code for update and retrieval.'>
+  <div class="slide-num"><em>03</em></div>
+  <p class="eyebrow">Architecture</p>
+  <h2>Proposed mobile pipeline</h2>
+  <div class="pipeline">
+    <div class="pipe-node"><div class="label">Camera</div><div class="sub">image + depth</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node"><div class="label">Detect</div><div class="sub">object + class</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node"><div class="label">Match</div><div class="sub">identity</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node"><div class="label">Track</div><div class="sub">continuity</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node record"><div class="label">Memory</div><div class="sub">record</div></div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node"><div class="label">Query</div><div class="sub">retrieval</div></div>
+  </div>
+  <div class="callout">
+    <p><strong>Memory record:</strong> identity · evidence · time · position · quality · map version</p>
+  </div>
+  <p class="small" style="margin-top:1rem">Tracker ID ≠ personal object identity. Threshold policy and app architecture are our teaching design. <span class="small">[3]</span></p>
+</section>
+
+<!-- ═══ SLIDE 4 ═══ -->
+<section class="slide" data-notes='Start with a calibrated image pixel and its depth along the optical axis. Inverse camera intrinsics produce a ray, and depth gives a camera-space point. Rotation and translation place it in a world coordinate system. The example uses a two meter depth and produces a camera-space point of point two, point one, and two meters. A one meter translation along x gives one point two, point one, and two. Watch the pose convention: world-to-camera and camera-to-world transforms are inverses. Finally, align the new session with the saved map before guidance. A precise-looking arrow is misleading if the maps do not agree.'>
+  <div class="slide-num"><em>04</em></div>
+  <p class="eyebrow">Geometry</p>
+  <h2>Pixel, depth, and camera pose</h2>
+  <p>Relocalization must restore the saved coordinate system before guidance.</p>
+  <div class="cols">
+    <div class="col-block">
+      <h3>Projection chain</h3>
+      <ul>
+        <li>Calibrated pixel + depth → <strong>camera-space point</strong></li>
+        <li>Rotation &amp; translation → <strong>world coordinates</strong></li>
+        <li>Example: depth = 2 m, tx = 1 m → point (1.2, 0.1, 2.0)</li>
+      </ul>
+      <div class="callout" style="margin-top:1rem">
+        <p><strong>Watch the convention:</strong> world-to-camera and camera-to-world are inverses.</p>
+      </div>
+    </div>
+    <div class="col-block">
+      <h3>Relocalization</h3>
+      <p>New session must align with the saved map before any directional guidance is issued.</p>
+      <div class="callout warn" style="margin-top:1rem">
+        <p><strong>Warning:</strong> a precise-looking arrow is misleading if the maps do not agree.</p>
+      </div>
+    </div>
+  </div>
+  <p class="small" style="margin-top:1.2rem">Sources: <a href="https://arxiv.org/abs/2007.11898" style="color:var(--accent)">ORB-SLAM3</a> [4] · <a href="https://arxiv.org/abs/2212.06969" style="color:var(--accent)">EgoLoc</a> [5] · <a href="https://developer.apple.com/documentation/arkit/saving-and-loading-world-data" style="color:var(--accent)">ARKit world maps</a> [6]</p>
+</section>
+
+<!-- ═══ SLIDE 5 ═══ -->
+<section class="slide" data-notes='This chart compares two configurations from Table 1 of the July twenty twenty-five E SOM manuscript. The learned detection and tracking configuration achieves four point zero two percent success, while the oracle configuration reaches eighty-one point nine two percent. The oracle supplies idealized detection and tracking. It is not a mobile product result. Success here uses a low spatiotemporal overlap threshold with the response track, so it is not a household recovery rate. The gap directs attention to perception and identity failures. CocoFormer addresses query-conditioned detection, and EgoLoc addresses important three-dimensional geometry issues.'>
+  <div class="slide-num"><em>05</em></div>
+  <p class="eyebrow">Research</p>
+  <h2>Research results depend on assumptions</h2>
+  <div class="chart-wrap">
+    <div class="bar-group">
+      <div class="bar-val">4.02<span style="font-size:.8em">%</span></div>
+      <div class="bar learned"></div>
+      <div class="bar-label">Learned<br>components</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-val pct">81.92<span style="font-size:.8em">%</span></div>
+      <div class="bar oracle"></div>
+      <div class="bar-label">Oracle<br>components</div>
+    </div>
+  </div>
+  <p class="chart-note">ESOM, arXiv v2 (July 2025), Table 1. Success requires ≥0.05 spatiotemporal IoU. <strong style="color:var(--warm)">[3]</strong></p>
+  <div class="callout warn" style="margin-top:1rem">
+    <p><strong>Oracle = idealized detection + tracking.</strong> These results do not measure object recovery in seniors' homes.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 6 ═══ -->
+<section class="slide" data-notes='Switch from PowerPoint to the published GitHub Pages website. Show the introduction and persistent chapter navigation briefly, then open Interactive lab. Reset the demo. Move the glasses to the sofa with observation enabled and ask for the last-seen location. Now turn observation off and move them to the shelf. Query again and point out that memory still says sofa. Explain that the orange dot is teaching ground truth unavailable to a real assistant. Advance forty minutes to trigger a stale response. Reset, disable map alignment, and show that directional guidance is withheld. Briefly open Detect and remember to show the Python example, then Practice and References. Return to PowerPoint. This demonstration uses synthetic data and does not run a computer vision model.'>
+  <div class="slide-num"><em>06</em></div>
+  <p class="eyebrow">Live demo</p>
+  <h2>Live website demonstration</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Observe a move</h3>
+      <p>Glasses move to the sofa. Memory updates.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Hide a move</h3>
+      <p>Glasses move to the shelf. Memory still says sofa.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Break alignment or age record</h3>
+      <p>The answer retains history and withholds precise guidance.</p>
+    </div>
+  </div>
+  <p class="small" style="margin-top:1.5rem">Website chapter 5: <a href="../demo.html" style="color:var(--accent)">Interactive lab</a> · synthetic observations</p>
+</section>
+
+<!-- ═══ SLIDE 7 ═══ -->
+<section class="slide" data-notes='An enrolled object inventory allows a relatively simple retrieval interface. A local object picker or a small phrase parser can map a request to an object ID, without a large language model. Quantization can reduce model weight storage, but conversion needs accuracy checks and representative calibration data. Measure actual latency and thermal behavior on the target phone. The record should retain only selected evidence and include a deletion control. Local storage can still reveal private information about a home. Accessibility means readable text, large controls, replayable audio, and alternatives to augmented reality. The proposed system needs testing with intended users.'>
+  <div class="slide-num"><em>07</em></div>
+  <p class="eyebrow">Design</p>
+  <h2>Offline mobile design</h2>
+  <div class="feature-grid">
+    <div class="feat"><div class="feat-dot"></div><span>Small, enrolled inventory</span></div>
+    <div class="feat"><div class="feat-dot"></div><span>Detector + appearance matching</span></div>
+    <div class="feat"><div class="feat-dot"></div><span>Simple name-to-object lookup</span></div>
+    <div class="feat"><div class="feat-dot"></div><span>Geometry after relocalization</span></div>
+    <div class="feat"><div class="feat-dot"></div><span>Device and user constraints</span></div>
+    <div class="feat"><div class="feat-dot"></div><span>Measure latency and battery use</span></div>
+    <div class="feat"><div class="feat-dot"></div><span>Protect and delete local evidence</span></div>
+    <div class="feat"><div class="feat-dot"></div><span>Offer text, speech, and images</span></div>
+  </div>
+  <div class="callout" style="margin-top:1.4rem">
+    <p>INT8 reduces weight bytes; it does <strong>not</strong> guarantee application speed. <span class="small">[7]</span></p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 8 ═══ -->
+<section class="slide" data-notes='The camera can miss a move, confuse similar objects, or lose its map. Our response policy should expose these limits rather than turn every query into a confident answer. A pilot can use scripted observed and hidden moves in two rooms, with separate enrollment, tuning, and evaluation captures. Report correct last-seen retrieval, false confident answers, abstentions, relocalization success, and geometric errors. Include failures in the denominator. Future progress should improve identity stability, persistent mapping, and user control. The main conclusion is that visual memory can organize evidence, while uncertainty and time remain part of every answer.'>
+  <div class="slide-num"><em>08</em></div>
+  <p class="eyebrow">Honesty</p>
+  <h2>Limits and evaluation</h2>
+  <div class="cols">
+    <div class="list-col">
+      <h3>Failure modes</h3>
+      <ul>
+        <li>Unseen movement</li>
+        <li>Occlusion and similar objects</li>
+        <li>Map drift and session changes</li>
+        <li>Mobile resource limits</li>
+      </ul>
+    </div>
+    <div class="list-col">
+      <h3>Evaluation</h3>
+      <ul>
+        <li>Correct last-seen retrieval</li>
+        <li>False confident answers</li>
+        <li>Abstention and coverage</li>
+        <li>Position and relocalization errors</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:1.5rem">
+    <p>Every useful answer includes its <strong>evidence</strong>, <strong>observation time</strong>, and <strong>uncertainty</strong>.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 9 ═══ -->
+<section class="slide" data-notes="The websites annotated bibliography includes eight distinct works, with title, author, date, synopsis, and reliability assessment. It links primary research, platform documentation, and accessibility guidance. The numerical E SOM result is explicitly versioned to the July twenty twenty five manuscript. The figures and the simulation are original teaching materials. For further reading, compare how the papers define a query, what data each system may access, and how success is measured. Thank you.">
+  <div class="slide-num"><em>09</em></div>
+  <p class="eyebrow">Bibliography</p>
+  <h2>References and further reading</h2>
+  <div class="ref-list">
+    <div class="ref-item"><span class="ref-num">[1]</span> Grauman et al. · Ego4D · CVPR 2022</div>
+    <div class="ref-item"><span class="ref-num">[5]</span> Mai et al. · EgoLoc · ICCV 2023</div>
+    <div class="ref-item"><span class="ref-num">[2]</span> Xu et al. · Where Is My Wallet? · CVPR 2023</div>
+    <div class="ref-item"><span class="ref-num">[6]</span> Apple · Saved world maps and relocalization</div>
+    <div class="ref-item"><span class="ref-num">[3]</span> Manigrasso et al. · ESOM · WACV 2026</div>
+    <div class="ref-item"><span class="ref-num">[7]</span> Google AI Edge · Post-training quantization</div>
+    <div class="ref-item"><span class="ref-num">[4]</span> Campos et al. · ORB-SLAM3 · T-RO 2021</div>
+    <div class="ref-item"><span class="ref-num">[8]</span> W3C WAI · Older users and accessibility</div>
+  </div>
+  <p class="small" style="margin-top:1.5rem">Full annotations and source links: <a href="../references.html" style="color:var(--accent)">website chapter 9</a></p>
+</section>
+
+</div><!-- /deck -->
+
+<!-- nav -->
+<nav class="nav" id="nav">
+  <button id="btnPrev" title="Previous slide (←)">← Prev</button>
+  <div class="nav-center">
+    <span class="counter"><b id="cur">1</b> / <span id="total">9</span></span>
+    <button id="btnNotes" title="Toggle speaker notes (N)">Notes</button>
+    <button id="btnFs" class="primary" title="Fullscreen (F)">Fullscreen</button>
+  </div>
+  <button id="btnNext" title="Next slide (→)">Next →</button>
+</nav>
+
+<!-- notes panel -->
+<div class="notes" id="notes">
+  <div class="notes-label">Speaker notes</div>
+  <p id="notesText"></p>
+</div>
+
+<div class="hint" id="hint">← → navigate · F fullscreen · N notes</div>
+
+<script>
+(function(){
+  const slides = [...document.querySelectorAll('.slide')];
+  const total = slides.length;
+  let cur = 0;
+  const $ = id => document.getElementById(id);
+
+  function go(n){
+    if(n<0||n>=total) return;
+    slides[cur].classList.remove('active');
+    slides[cur].classList.toggle('prev', n>cur);
+    cur = n;
+    slides[cur].classList.add('active');
+    slides[cur].classList.remove('prev');
+    $('cur').textContent = cur+1;
+    $('progress').style.width = ((cur+1)/total*100)+'%';
+    $('notesText').textContent = slides[cur].dataset.notes||'';
+  }
+
+  $('btnNext').onclick = () => go(cur+1);
+  $('btnPrev').onclick = () => go(cur-1);
+  $('btnNotes').onclick = () => { $('notes').classList.toggle('open'); $('btnNotes').classList.toggle('primary'); };
+  $('btnFs').onclick = () => {
+    if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  };
+
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); go(cur+1); }
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+    if(e.key==='Home') go(0);
+    if(e.key==='End') go(total-1);
+    if(e.key==='f'||e.key==='F') $('btnFs').click();
+    if(e.key==='n'||e.key==='N') $('btnNotes').click();
+    if(e.key==='Escape'){ $('notes').classList.remove('open'); $('btnNotes').classList.remove('primary'); }
+  });
+
+  // touch swipe
+  let tx=0;
+  document.addEventListener('touchstart',e=>{tx=e.changedTouches[0].screenX},{passive:true});
+  document.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].screenX-tx;
+    if(dx<-50) go(cur+1);
+    if(dx>50) go(cur-1);
+  },{passive:true});
+
+  // hide hint after 4s
+  setTimeout(()=>{ $('hint').classList.add('hide'); },4000);
+  $('progress').style.width = (1/total*100)+'%';
+})();
+</script>
+</body>
+</html>
